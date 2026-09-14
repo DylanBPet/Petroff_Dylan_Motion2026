@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PipeLine : MonoBehaviour
 {
-    public float totalMag;
+    public float totalMag; 
 
     public Vector2 mouseOldPos;
     public Vector2 mouseNewPos;
