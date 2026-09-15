@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
 
     public float cornerDistance;
 
+    public float ratio;
+
     void Start()
     {
     
@@ -40,6 +42,11 @@ public class Player : MonoBehaviour
         if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             SpawnBombOnRandomCorner(cornerDistance);
+        }
+
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+        {
+            WarpPlayer(enemyTransform, ratio);
         }
 
     }
@@ -137,5 +144,35 @@ public class Player : MonoBehaviour
             spawnPos = playerPos + playerToBotR.normalized * inDistance;
         }
         Instantiate(bombPrefab, spawnPos, Quaternion.identity);
+    }
+
+    public void WarpPlayer(Transform target, float ratio)
+    {
+        Vector3 direction = (Vector2)target.transform.position - playerPos;
+
+        float distance = direction.magnitude;
+
+        //////////////////////////
+        //Where the player should end up
+        //75%
+        Debug.DrawLine(transform.position + direction.normalized * 0.75f * distance + new Vector3(0, 1, 0), transform.position + direction.normalized * 0.75f * distance + new Vector3(0, -1, 0), Color.yellow, 100f);
+
+        //50%
+        Debug.DrawLine(transform.position + direction.normalized * 0.5f * distance + new Vector3(0, 1, 0), transform.position + direction.normalized * 0.5f * distance + new Vector3(0, -1, 0), Color.green, 100f);
+
+        //25%
+        Debug.DrawLine(transform.position + direction.normalized * 0.25f * distance + new Vector3(0, 1, 0), transform.position + direction.normalized * 0.25f * distance + new Vector3(0, -1, 0), Color.orange, 100f);
+        /////////////////////////////////
+
+        direction = direction.normalized * ratio;
+
+
+        Vector3 moveDistance = direction * distance;
+        transform.position += moveDistance;
+
+        //find the target
+        Debug.DrawLine(transform.position, target.position, Color.red, 100f);
+
+        
     }
 }
