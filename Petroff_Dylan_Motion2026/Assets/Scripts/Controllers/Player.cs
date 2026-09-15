@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
 
     public int numberOfBombs;
 
+    public float cornerDistance;
+
     void Start()
     {
     
@@ -33,6 +35,11 @@ public class Player : MonoBehaviour
         if (Keyboard.current.bKey.wasPressedThisFrame)
         {
             SpawnBombAhead(inOffset);
+        }
+
+        if (Keyboard.current.cKey.wasPressedThisFrame)
+        {
+            SpawnBombOnRandomCorner(cornerDistance);
         }
 
     }
@@ -66,4 +73,69 @@ public class Player : MonoBehaviour
        
     }
 
+    public void SpawnBombOnRandomCorner(float inDistance)
+    {
+        Vector2 spawnPos = playerPos;
+        //calculate the 4 corners and normailze
+
+        //top
+        Vector2 topL = playerPos + new Vector2 (-1, 1);
+        Vector2 topR = playerPos + new Vector2(1, 1);
+        //bottom 
+        Vector2 botL = playerPos + new Vector2(-1, -1);
+        Vector2 botR = playerPos + new Vector2(1, -1);
+
+
+        ////testing
+        Debug.DrawLine(playerPos, topL, Color.blue, 100f);
+        Debug.DrawLine(playerPos, topR, Color.red, 100f);
+        Debug.DrawLine(playerPos, botL, Color.purple, 100f);
+        Debug.DrawLine(playerPos, botR, Color.orange, 100f);
+
+        //choose one at random
+        int randomNumber = Random.Range(1, 5);
+        if (randomNumber == 1)
+        {
+            //Top Left
+
+            //get the direction from the player to Top Left
+            Vector2 playerToTopL = topL - playerPos;
+
+            //calculate the spawn position which will be the normalized vector multiplied by the distance
+            spawnPos = playerPos + playerToTopL.normalized * inDistance;
+        }
+        else if (randomNumber == 2)
+        {
+            //Top Right
+
+
+            //get the direction from the player to Top Right
+            Vector2 playerToTopR = topR - playerPos;
+
+            //calculate the spawn position which will be the normalized vector multiplied by the distance (add back in player position)
+            spawnPos = playerPos + playerToTopR.normalized * inDistance;
+        }
+        else if (randomNumber == 3)
+        {
+            //Bottom Left
+
+
+            //get the direction from the player to Bottom Left
+            Vector2 playerToBotL = botL - playerPos;
+
+            //calculate the spawn position which will be the normalized vector multiplied by the distance
+            spawnPos = playerPos + playerToBotL.normalized * inDistance;
+        }
+        else if (randomNumber == 4)
+        {
+            //Bottom Right
+
+            //get the direction from the player to Bottom Right
+            Vector2 playerToBotR = botR - playerPos;
+
+            //calculate the spawn position which will be the normalized vector multiplied by the distance
+            spawnPos = playerPos + playerToBotR.normalized * inDistance;
+        }
+        Instantiate(bombPrefab, spawnPos, Quaternion.identity);
+    }
 }
