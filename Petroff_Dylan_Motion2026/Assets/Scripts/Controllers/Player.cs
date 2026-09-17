@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
 
     public float ratio;
 
+    public float asteroidDetectionRange;
+
     void Start()
     {
     
@@ -48,6 +50,8 @@ public class Player : MonoBehaviour
         {
             WarpPlayer(enemyTransform, ratio);
         }
+
+        DetectAsteroids(asteroidDetectionRange, asteroidTransforms);
 
     }
 
@@ -172,7 +176,24 @@ public class Player : MonoBehaviour
 
         //find the target
         Debug.DrawLine(transform.position, target.position, Color.red, 100f);
+    }
 
-        
+    public void DetectAsteroids(float inMaxRange, List<Transform> inAsteroids)
+    {
+        for (int i = 0; i < inAsteroids.Count; i++)
+        {
+            //check how far ALL asteroids are from the player
+            float distanceFromPlayer = Vector2.Distance(playerPos, inAsteroids[i].position);
+
+            //if the asteroid is within the max range, do calculation
+            if (distanceFromPlayer < inMaxRange)
+            {
+                Vector2 direction = (Vector2)inAsteroids[i].position - playerPos;
+                direction = direction.normalized * 2.5f;
+
+                //display the line
+                Debug.DrawLine(playerPos, direction + playerPos, Color.green, 0.05f);
+            }
+        }
     }
 }
