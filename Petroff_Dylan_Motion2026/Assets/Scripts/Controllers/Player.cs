@@ -23,13 +23,28 @@ public class Player : MonoBehaviour
 
     public float asteroidDetectionRange;
 
+    public Vector3 movement;
+    public float speed;
+
+    public Vector3 currentVelocity;
+    public float accelerationTime;
+    public float currentAcceleration;
+
+    public float decelerationTime;
+    public float currentDeceleration;
+
     void Start()
     {
-    
+        currentAcceleration = speed / accelerationTime;
+
+        currentDeceleration = speed / decelerationTime;
     }
+
     void Update()
     {
         playerPos = transform.position;
+
+        PlayerMovement();
 
         if (Keyboard.current.tKey.wasPressedThisFrame)
         {
@@ -195,5 +210,50 @@ public class Player : MonoBehaviour
                 Debug.DrawLine(playerPos, direction + playerPos, Color.green, 0.05f);
             }
         }
+    }
+
+    void PlayerMovement()
+    {
+        Vector3 accelerationDirection = Vector3.zero;
+        if (Keyboard.current.leftArrowKey.isPressed)
+        {
+            accelerationDirection += Vector3.left;
+        }
+        if (Keyboard.current.rightArrowKey.isPressed)
+        {
+            accelerationDirection += Vector3.right;
+        }
+        if (Keyboard.current.upArrowKey.isPressed)
+        {
+            accelerationDirection += Vector3.up;
+        }
+        if (Keyboard.current.downArrowKey.isPressed)
+        {
+            accelerationDirection += Vector3.down;
+        }
+        if(!Keyboard.current.downArrowKey.isPressed && !Keyboard.current.upArrowKey.isPressed && !Keyboard.current.rightArrowKey.isPressed && !Keyboard.current.leftArrowKey.isPressed)
+        {
+            //decelerization 
+            currentVelocity -= currentVelocity.normalized * currentDeceleration * Time.deltaTime;
+        }
+
+        //what we are adding to the transform.position = direction we are going (normalized) * how fast we are going * time since last frame
+        currentVelocity += accelerationDirection.normalized * currentAcceleration * Time.deltaTime;
+
+        //if we are going faster then speed
+        if (currentVelocity.magnitude > speed)
+        {
+            //redo the calculation for velocity
+            currentVelocity = currentVelocity.normalized * speed;
+        }
+
+        if (currentVelocity.magnitude < 0.0001f)
+        {
+            currentVelocity *= 0;
+        }
+
+        transform.position = transform.position + currentVelocity * Time.deltaTime;
+
+        
     }
 }
