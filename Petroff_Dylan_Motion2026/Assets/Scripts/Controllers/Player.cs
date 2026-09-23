@@ -33,6 +33,10 @@ public class Player : MonoBehaviour
     public float decelerationTime;
     public float currentDeceleration;
 
+    Vector3 enemyVelocity;
+    Vector3 enemyDrag;
+    public float maxDistanceFalloff;
+
     void Start()
     {
         currentAcceleration = speed / accelerationTime;
@@ -67,7 +71,7 @@ public class Player : MonoBehaviour
         }
 
         DetectAsteroids(asteroidDetectionRange, asteroidTransforms);
-
+        EnemyMovement();
     }
 
     void SpawnBombAhead(Vector3 inOffset)
@@ -254,6 +258,43 @@ public class Player : MonoBehaviour
 
         transform.position = transform.position + currentVelocity * Time.deltaTime;
 
+        
+    }
+
+    public void EnemyMovement()
+    {
+        
+        //calculate how fast it will go. It will speed up half as fast as the player
+        float enemySpeed = speed / (accelerationTime / 2);
+
+        //get the direction it is going
+        Vector3 direction = (Vector3)playerPos - enemyTransform.position;
+        
+        //point at player
+        enemyTransform.transform.up = direction;
+        
+        
+
+        //calculating how far the enemy is from the player and turning it into a decemal percentage
+        float distancePercentage = Vector3.Distance(playerPos, enemyTransform.position) / maxDistanceFalloff;
+
+        //enemy acceleration
+        enemyVelocity += direction.normalized * enemySpeed * distancePercentage * Time.deltaTime;
+
+        //enemy drag
+        enemyDrag -= direction.normalized * enemySpeed * distancePercentage * Time.deltaTime;
+        
+        if (enemyVelocity.magnitude > speed)
+        {
+            //redo the calculation for velocity
+            enemyVelocity = enemyVelocity.normalized * speed;
+        }
+        
+
+        //add it to player
+        enemyTransform.position += (enemyVelocity - enemyDrag) * Time.deltaTime;
+
+        Debug.DrawLine(enemyTransform.position, direction);
         
     }
 }
