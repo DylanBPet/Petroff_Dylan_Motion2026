@@ -71,7 +71,7 @@ public class Player : MonoBehaviour
         }
 
         DetectAsteroids(asteroidDetectionRange, asteroidTransforms);
-        EnemyMovement();
+        //EnemyMovement();
     }
 
     void SpawnBombAhead(Vector3 inOffset)
