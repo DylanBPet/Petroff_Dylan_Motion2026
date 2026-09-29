@@ -25,6 +25,14 @@ public class AngleTest : MonoBehaviour
     public int powerUpRadius;
     public int numberOfPowerups;
 
+    [Space]
+    [Space]
+    [Space]
+
+    float t;
+    int orbitAngleNumber = 0;
+    public GameObject orbitPlanet;
+    public GameObject orbitingPlanet;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -71,11 +79,14 @@ public class AngleTest : MonoBehaviour
         */
 
         EnemyRadar(circleRadius, angles.Count);
+
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             SpawnPowerUps(powerUpRadius, numberOfPowerups);
         }
-        
+
+        OrbitalMotion(2, 2, orbitPlanet.transform);
+
     }
 
     public void EnemyRadar(float radius, int circlePoints)
@@ -142,5 +153,37 @@ public class AngleTest : MonoBehaviour
 
             Instantiate(powerUpOrbs, spawnPos, Quaternion.identity);
         }
+    }
+
+    public void OrbitalMotion(float radius, float speed, Transform target)
+    {
+
+        t += speed * Time.deltaTime;
+
+         if (t >= 1)
+         {
+            t = 0;
+
+            //increase orbitAngleNumber
+            orbitAngleNumber++;
+
+            if (orbitAngleNumber >= angles.Count-1)
+            {
+                orbitAngleNumber = 0;
+            }
+         }
+        Vector2 startPos = new Vector2(Mathf.Cos(angles[orbitAngleNumber] * Mathf.Deg2Rad), Mathf.Sin(angles[orbitAngleNumber] * Mathf.Deg2Rad));
+        startPos *= radius;
+        startPos += (Vector2)target.position;
+
+        Vector2 endPos = new Vector2(Mathf.Cos(angles[orbitAngleNumber + 1] * Mathf.Deg2Rad), Mathf.Sin(angles[orbitAngleNumber + 1] * Mathf.Deg2Rad));
+        endPos *= radius;
+        endPos += (Vector2)target.position;
+
+        Vector2.Lerp(startPos, endPos, t);
+
+       
+
+        orbitingPlanet.transform.position = Vector2.Lerp(startPos, endPos, t);
     }
 }
