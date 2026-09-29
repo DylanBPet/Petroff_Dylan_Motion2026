@@ -234,6 +234,10 @@ MonoBehaviour:
   circleOffset: {x: 0, y: 0}
   playerPos: {fileID: 786027954}
   enemyPos: {fileID: 357247696}
+  powerUpAngles: []
+  powerUpOrbs: {fileID: 1273894435109820, guid: b262926197932c945b68169dd6fd6c5c, type: 3}
+  powerUpRadius: 2
+  numberOfPowerups: 5
 --- !u!4 &80990611
 Transform:
   m_ObjectHideFlags: 0

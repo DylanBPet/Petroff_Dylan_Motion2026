@@ -16,6 +16,16 @@ public class AngleTest : MonoBehaviour
 
     Color lineColor;
 
+    [Space]
+    [Space]
+    [Space]
+
+    public List<float> powerUpAngles;
+    public GameObject powerUpOrbs;
+    public int powerUpRadius;
+    public int numberOfPowerups;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -61,6 +71,10 @@ public class AngleTest : MonoBehaviour
         */
 
         EnemyRadar(circleRadius, angles.Count);
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            SpawnPowerUps(powerUpRadius, numberOfPowerups);
+        }
         
     }
 
@@ -104,6 +118,29 @@ public class AngleTest : MonoBehaviour
         else
         {
             lineColor = Color.green;
+        }
+    }
+
+    public void SpawnPowerUps(float radius, int numberOfPowerups)
+    {
+        while (powerUpAngles.Count < numberOfPowerups)
+        {
+            powerUpAngles.Add(0);
+        }
+
+        for (int i = 0; i < powerUpAngles.Count; i++)
+        {
+            powerUpAngles[i] = i * (360 / powerUpAngles.Count);
+            
+        }
+
+        for (int i = 0; i < powerUpAngles.Count; i++)
+        {
+            Vector2 spawnPos = new Vector2(Mathf.Cos(powerUpAngles[i] * Mathf.Deg2Rad), Mathf.Sin(powerUpAngles[i] * Mathf.Deg2Rad));
+            spawnPos *= radius;
+            spawnPos += (Vector2)playerPos.transform.position;
+
+            Instantiate(powerUpOrbs, spawnPos, Quaternion.identity);
         }
     }
 }
