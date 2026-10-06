@@ -219,19 +219,19 @@ public class Player : MonoBehaviour
     void PlayerMovement()
     {
         Vector3 accelerationDirection = Vector3.zero;
-        if (Keyboard.current.leftArrowKey.isPressed)
+        if (Keyboard.current.aKey.isPressed)
         {
             accelerationDirection += Vector3.left;
         }
-        if (Keyboard.current.rightArrowKey.isPressed)
+        if (Keyboard.current.dKey.isPressed)
         {
             accelerationDirection += Vector3.right;
         }
-        if (Keyboard.current.upArrowKey.isPressed)
+        if (Keyboard.current.wKey.isPressed)
         {
             accelerationDirection += Vector3.up;
         }
-        if (Keyboard.current.downArrowKey.isPressed)
+        if (Keyboard.current.sKey.isPressed)
         {
             accelerationDirection += Vector3.down;
         }
