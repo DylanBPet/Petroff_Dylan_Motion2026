@@ -20,7 +20,7 @@ public class Assignment1Script : MonoBehaviour
     public float distanceFromPlayer;
 
     [Header("List of Enemies")]
-    public List<GameObject> enemys;
+    public List<GameObject> enemies;
 
     [Header("Laser Shooters rotation Speed")]
     public float rotationSpeed;
@@ -30,6 +30,14 @@ public class Assignment1Script : MonoBehaviour
 
     //tracking where we are in list
     int currentLaserPosition;
+
+    //index for the closest asteroids on each side
+    int indexOfClosestEnemyLeft;
+    int indexOfClosestEnemyRight;
+
+    //the current closest asteroid. To start i will set it to the maximum possible distance
+    Vector2 currentFurthestLeft = Vector2.positiveInfinity;
+    Vector2 currentFurthestRight = Vector2.positiveInfinity;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,13 +64,54 @@ public class Assignment1Script : MonoBehaviour
         moveToPositionOfLeft *= distanceFromPlayer;
         moveToPositionOfRight *= distanceFromPlayer;
 
+        //reset the furthest values
+        currentFurthestLeft = Vector2.positiveInfinity;
+        currentFurthestRight = Vector2.positiveInfinity;
+
         //Find closest Enemy
-        //Will work on this later, for now
-        int enemyTarget = 0;
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            //check if the enemy is on the left or right of player
+            Vector2 direction = enemies[i].transform.position - player.transform.position;
+            float dotProduct = player.transform.right.x * direction.x + player.transform.right.y * direction.y;
+
+            //Debug.Log(dotProduct);
+
+            if (dotProduct < 0) //its on the left
+            {
+                //calculate the distance between the player and enemy
+                float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
+                //calculate the current furthest distance
+                float currentMaxDistance = Vector2.Distance(player.transform.position, currentFurthestLeft);
+
+                //Debug.DrawLine(player.transform.position, currentFurthestLeft);
+
+                if (distance < currentMaxDistance)
+                {
+                    currentFurthestLeft = enemies[i].transform.position;
+                    indexOfClosestEnemyLeft = i;
+                }
+            }
+            else if (dotProduct > 0) //its on the right
+            {
+                //calculate distance between player and enemy
+                float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
+                //calculate the current furthest distance
+                float currentMaxDistance = Vector2.Distance(player.transform.position, currentFurthestRight);
+
+                //Debug.DrawLine(player.transform.position, currentFurthestRight);
+
+                if (distance < currentMaxDistance)
+                {
+                    currentFurthestRight = enemies[i].transform.position;
+                    indexOfClosestEnemyRight = i;
+                }
+            }
+        }
 
         //get Dot product
-        float leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, enemyTarget);
-        float rightDotProduct = GetDotProduct(laserShooterRightGO.transform, enemyTarget);
+        float leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, indexOfClosestEnemyLeft);
+        float rightDotProduct = GetDotProduct(laserShooterRightGO.transform, indexOfClosestEnemyRight);
 
         if (leftDotProduct > 0)
         {
@@ -126,7 +175,7 @@ public class Assignment1Script : MonoBehaviour
 
     public float GetDotProduct(Transform laserShooterSide, int i)
     {
-        Vector3 direction = enemys[i].transform.position - laserShooterSide.transform.position;
+        Vector3 direction = enemies[i].transform.position - laserShooterSide.transform.position;
 
         float dotProduct = laserShooterSide.transform.right.x * direction.x + laserShooterSide.transform.right.y * direction.y;
 
@@ -179,4 +228,5 @@ public class Assignment1Script : MonoBehaviour
         }
         
     }
+
 }
