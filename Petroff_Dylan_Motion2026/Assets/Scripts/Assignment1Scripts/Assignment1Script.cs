@@ -36,8 +36,13 @@ public class Assignment1Script : MonoBehaviour
     int indexOfClosestEnemyRight;
 
     //the current closest asteroid. To start i will set it to the maximum possible distance
-    Vector2 currentFurthestLeft = Vector2.positiveInfinity;
-    Vector2 currentFurthestRight = Vector2.positiveInfinity;
+    Vector2 currentClosestLeft = Vector2.positiveInfinity;
+    Vector2 currentClosestRight = Vector2.positiveInfinity;
+
+    Vector2 endOfLaserToDestroy = Vector2.zero;
+
+    bool triggerDestroyObject = false;
+    int indexOfEnemyToDestroy;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -65,77 +70,87 @@ public class Assignment1Script : MonoBehaviour
         moveToPositionOfRight *= distanceFromPlayer;
 
         //reset the furthest values
-        currentFurthestLeft = Vector2.positiveInfinity;
-        currentFurthestRight = Vector2.positiveInfinity;
+        currentClosestLeft = Vector2.positiveInfinity;
+        currentClosestRight = Vector2.positiveInfinity;
 
-        //Find closest Enemy
-        for (int i = 0; i < enemies.Count; i++)
+        //only if there are asteroids on screen
+        if (enemies.Count > 0)
         {
-            //check if the enemy is on the left or right of player
-            Vector2 direction = enemies[i].transform.position - player.transform.position;
-            float dotProduct = player.transform.right.x * direction.x + player.transform.right.y * direction.y;
-
-            //Debug.Log(dotProduct);
-
-            if (dotProduct < 0) //its on the left
+            //Find closest Enemy
+            for (int i = enemies.Count -1; i < 0; i--)
             {
-                //calculate the distance between the player and enemy
-                float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
-                //calculate the current furthest distance
-                float currentMaxDistance = Vector2.Distance(player.transform.position, currentFurthestLeft);
+                //check if the enemy is on the left or right of player
+                Vector2 direction = enemies[i].transform.position - player.transform.position;
+                float dotProduct = player.transform.right.x * direction.x + player.transform.right.y * direction.y;
 
-                //Debug.DrawLine(player.transform.position, currentFurthestLeft);
+                //Debug.Log(dotProduct);
 
-                if (distance < currentMaxDistance)
+                if (dotProduct < 0) //its on the left
                 {
-                    currentFurthestLeft = enemies[i].transform.position;
-                    indexOfClosestEnemyLeft = i;
+                    //calculate the distance between the player and enemy
+                    float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
+                    //calculate the current furthest distance
+                    float currentMaxDistance = Vector2.Distance(player.transform.position, currentClosestLeft);
+
+
+                    if (distance < currentMaxDistance)
+                    {
+                        currentClosestLeft = enemies[i].transform.position;
+                        indexOfClosestEnemyLeft = i;
+                    }
+                }
+                else if (dotProduct > 0) //its on the right
+                {
+                    //calculate distance between player and enemy
+                    float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
+                    //calculate the current furthest distance
+                    float currentMaxDistance = Vector2.Distance(player.transform.position, currentClosestRight);
+
+                   
+
+                    if (distance < currentMaxDistance)
+                    {
+                        currentClosestRight = enemies[i].transform.position;
+                        indexOfClosestEnemyRight = i;
+                        
+                    }
                 }
             }
-            else if (dotProduct > 0) //its on the right
+
+            Debug.DrawLine(player.transform.position, currentClosestRight);
+            Debug.DrawLine(player.transform.position, currentClosestLeft);
+            //get Dot product
+            Vector3 directionleft = enemies[indexOfClosestEnemyLeft].transform.position - laserShooterLeftGO.transform.position;
+            float leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, directionleft);
+
+            Vector3 directionright = enemies[indexOfClosestEnemyRight].transform.position - laserShooterRightGO.transform.position;
+            float rightDotProduct = GetDotProduct(laserShooterRightGO.transform, directionright);
+
+
+
+            if (leftDotProduct > 0)
             {
-                //calculate distance between player and enemy
-                float distance = Vector2.Distance(enemies[i].transform.position, player.transform.position);
-                //calculate the current furthest distance
-                float currentMaxDistance = Vector2.Distance(player.transform.position, currentFurthestRight);
-
-                //Debug.DrawLine(player.transform.position, currentFurthestRight);
-
-                if (distance < currentMaxDistance)
-                {
-                    currentFurthestRight = enemies[i].transform.position;
-                    indexOfClosestEnemyRight = i;
-                }
+                //rotate Right
+                laserShooterLeftGO.transform.eulerAngles -= Vector3.forward * rotationSpeed * Time.deltaTime;
             }
-        }
+            else if (leftDotProduct < 0)
+            {
+                //rotate Left
+                laserShooterLeftGO.transform.eulerAngles += Vector3.forward * rotationSpeed * Time.deltaTime;
+            }
 
-        //get Dot product
-        float leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, indexOfClosestEnemyLeft);
-        float rightDotProduct = GetDotProduct(laserShooterRightGO.transform, indexOfClosestEnemyRight);
+            if (rightDotProduct > 0)
+            {
+                //rotate Right
+                laserShooterRightGO.transform.eulerAngles -= Vector3.forward * rotationSpeed * Time.deltaTime;
+            }
+            else if (rightDotProduct < 0)
+            {
+                //rotate Left
+                laserShooterRightGO.transform.eulerAngles += Vector3.forward * rotationSpeed * Time.deltaTime;
+            }
 
-        if (leftDotProduct > 0)
-        {
-            //rotate Right
-            laserShooterLeftGO.transform.eulerAngles -= Vector3.forward * rotationSpeed * Time.deltaTime;
         }
-        else if (leftDotProduct < 0)
-        {
-            //rotate Left
-            laserShooterLeftGO.transform.eulerAngles += Vector3.forward * rotationSpeed * Time.deltaTime;
-        }
-
-        if (rightDotProduct > 0)
-        {
-            //rotate Right
-            laserShooterRightGO.transform.eulerAngles -= Vector3.forward * rotationSpeed * Time.deltaTime;
-        }
-        else if (rightDotProduct < 0)
-        {
-            //rotate Left
-            laserShooterRightGO.transform.eulerAngles += Vector3.forward * rotationSpeed * Time.deltaTime;
-        }
-
-
         //then add the player position
         moveToPositionOfLeft += (Vector2)player.transform.position;
         moveToPositionOfRight += (Vector2)player.transform.position;
@@ -148,7 +163,14 @@ public class Assignment1Script : MonoBehaviour
         {
             ShootLaser();
         }
-        
+
+        if (triggerDestroyObject)
+        {
+            DestroyEnemy(indexOfEnemyToDestroy);
+            Debug.Log("enemy hit " + indexOfEnemyToDestroy);
+            triggerDestroyObject = false;
+        }
+
     }
 
     public void MoveLaserShootersUp()
@@ -173,13 +195,12 @@ public class Assignment1Script : MonoBehaviour
         }
     }
 
-    public float GetDotProduct(Transform laserShooterSide, int i)
+    public float GetDotProduct(Transform laserShooterSide, Vector3 direction)
     {
-        Vector3 direction = enemies[i].transform.position - laserShooterSide.transform.position;
 
-        float dotProduct = laserShooterSide.transform.right.x * direction.x + laserShooterSide.transform.right.y * direction.y;
+            float dotProduct = laserShooterSide.transform.right.x * direction.x + laserShooterSide.transform.right.y * direction.y;
 
-        return dotProduct;
+            return dotProduct;
     }
 
     public void ShootLaser()
@@ -223,10 +244,28 @@ public class Assignment1Script : MonoBehaviour
             //apply the travel speed to the start and end of the line
             endOfLaser += laserTravelSpeed * laserSpeed * Time.deltaTime;
             startOfLaser += laserTravelSpeed * laserSpeed * Time.deltaTime;
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                float distanceToEnemy = Vector2.Distance(endOfLaser, enemies[i].transform.position);
 
-            yield return null;
+                if (distanceToEnemy < 1)
+                {
+                    indexOfEnemyToDestroy = i;
+                    endOfLaserToDestroy = endOfLaser;
+                    triggerDestroyObject = true;
+                    break;
+                }
+            }
+                    yield return null;
         }
         
+    }
+
+    public void DestroyEnemy(int i)
+    {
+        GameObject enemy = enemies[i];
+        enemies.RemoveAt(i);
+        Destroy(enemy);
     }
 
 }
