@@ -130,7 +130,7 @@ public class Assignment1Script : MonoBehaviour
 
             if (indexOfClosestEnemyLeft != -1)
             {
-                Debug.DrawLine(player.transform.position, currentClosestLeft);
+                //Debug.DrawLine(player.transform.position, currentClosestLeft);
                 //get Dot product
                  directionLeft = enemies[indexOfClosestEnemyLeft].transform.position - laserShooterLeftGO.transform.position;
                  leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, directionLeft);
@@ -138,7 +138,7 @@ public class Assignment1Script : MonoBehaviour
 
             if (indexOfClosestEnemyRight != -1)
             {
-                Debug.DrawLine(player.transform.position, currentClosestRight);
+                //Debug.DrawLine(player.transform.position, currentClosestRight);
                 //get Dot product
                  directionRight = enemies[indexOfClosestEnemyRight].transform.position - laserShooterRightGO.transform.position;
                  rightDotProduct = GetDotProduct(laserShooterRightGO.transform, directionRight);
