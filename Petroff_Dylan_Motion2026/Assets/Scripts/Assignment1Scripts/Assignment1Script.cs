@@ -44,6 +44,13 @@ public class Assignment1Script : MonoBehaviour
     bool triggerDestroyObject = false;
     int indexOfEnemyToDestroy;
 
+    Vector3 directionRight;
+    float rightDotProduct;
+
+    Vector3 directionLeft;
+    float leftDotProduct;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -72,6 +79,8 @@ public class Assignment1Script : MonoBehaviour
         moveToPositionOfRight *= distanceFromPlayer;
 
         //reset the furthest values
+        indexOfClosestEnemyLeft = -1;
+        indexOfClosestEnemyRight = -1;
         currentClosestLeft = Vector2.positiveInfinity;
         currentClosestRight = Vector2.positiveInfinity;
 
@@ -79,7 +88,7 @@ public class Assignment1Script : MonoBehaviour
         if (enemies.Count > 0)
         {
             //Find closest Enemy
-            for (int i = enemies.Count -1; i < 0; i--)
+            for (int i = enemies.Count -1; i >= 0; i--)
             {
                 //check if the enemy is on the left or right of player
                 Vector2 direction = enemies[i].transform.position - player.transform.position;
@@ -119,15 +128,21 @@ public class Assignment1Script : MonoBehaviour
                 }
             }
 
-            Debug.DrawLine(player.transform.position, currentClosestRight);
-            Debug.DrawLine(player.transform.position, currentClosestLeft);
-            //get Dot product
-            Vector3 directionleft = enemies[indexOfClosestEnemyLeft].transform.position - laserShooterLeftGO.transform.position;
-            float leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, directionleft);
+            if (indexOfClosestEnemyLeft != -1)
+            {
+                Debug.DrawLine(player.transform.position, currentClosestLeft);
+                //get Dot product
+                 directionLeft = enemies[indexOfClosestEnemyLeft].transform.position - laserShooterLeftGO.transform.position;
+                 leftDotProduct = GetDotProduct(laserShooterLeftGO.transform, directionLeft);
+            }
 
-            Vector3 directionright = enemies[indexOfClosestEnemyRight].transform.position - laserShooterRightGO.transform.position;
-            float rightDotProduct = GetDotProduct(laserShooterRightGO.transform, directionright);
-
+            if (indexOfClosestEnemyRight != -1)
+            {
+                Debug.DrawLine(player.transform.position, currentClosestRight);
+                //get Dot product
+                 directionRight = enemies[indexOfClosestEnemyRight].transform.position - laserShooterRightGO.transform.position;
+                 rightDotProduct = GetDotProduct(laserShooterRightGO.transform, directionRight);
+            }
 
 
             if (leftDotProduct > 0)
