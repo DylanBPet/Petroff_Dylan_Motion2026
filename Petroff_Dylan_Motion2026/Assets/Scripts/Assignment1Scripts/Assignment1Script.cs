@@ -43,6 +43,8 @@ public class Assignment1Script : MonoBehaviour
     void Start()
     {
         currentLaserPosition = 0;
+
+
     }
 
     // Update is called once per frame
@@ -148,7 +150,7 @@ public class Assignment1Script : MonoBehaviour
         {
             ShootLaser();
         }
-        
+
     }
 
     public void MoveLaserShootersUp()
@@ -223,7 +225,6 @@ public class Assignment1Script : MonoBehaviour
             //apply the travel speed to the start and end of the line
             endOfLaser += laserTravelSpeed * laserSpeed * Time.deltaTime;
             startOfLaser += laserTravelSpeed * laserSpeed * Time.deltaTime;
-
             yield return null;
         }
         
